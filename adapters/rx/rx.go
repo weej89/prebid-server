@@ -6,23 +6,19 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/prebid/prebid-server/openrtb_ext"
-
-	"github.com/mxmCherry/openrtb"
 	"github.com/prebid/prebid-server/adapters"
 	"github.com/prebid/prebid-server/errortypes"
+	"github.com/prebid/prebid-server/openrtb_ext"
 	"github.com/prebid/prebid-server/pbs"
+
+	"github.com/mxmCherry/openrtb"
 )
 
-var _ adapters.Bidder = &RXAdapter{}
+var _ adapters.Bidder = (*RXAdapter)(nil)
 
 type RXAdapter struct {
 	http *adapters.HTTPAdapter
 	URI  string
-}
-
-type rxBidExt struct {
-	AdspotID int `json:"adspot_id,omitempty"`
 }
 
 func (a *RXAdapter) Name() string {
@@ -52,7 +48,6 @@ func (a *RXAdapter) Call(ctx context.Context, req *pbs.PBSRequest, bidder *pbs.P
 
 func (a *RXAdapter) MakeRequests(request *openrtb.BidRequest) ([]*adapters.RequestData, []error) {
 	numRequests := len(request.Imp)
-	var err error
 	errs := make([]error, 0, len(request.Imp))
 	requestData := make([]*adapters.RequestData, 0, numRequests)
 	headers := http.Header{}
@@ -61,14 +56,14 @@ func (a *RXAdapter) MakeRequests(request *openrtb.BidRequest) ([]*adapters.Reque
 	reqImpCopy := request.Imp
 	for _, imp := range reqImpCopy {
 		var bidExt adapters.ExtImpBidder
-		if err = json.Unmarshal(imp.Ext, &bidExt); err != nil {
+		if err := json.Unmarshal(imp.Ext, &bidExt); err != nil {
 			errs = append(errs, &errortypes.BadInput{
 				Message: err.Error(),
 			})
 			continue
 		}
 		var rxExt openrtb_ext.ExtImpRX
-		if err = json.Unmarshal(bidExt.Bidder, &rxExt); err != nil {
+		if err := json.Unmarshal(bidExt.Bidder, &rxExt); err != nil {
 			errs = append(errs, &errortypes.BadInput{
 				Message: err.Error(),
 			})

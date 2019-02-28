@@ -5,11 +5,10 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/prebid/prebid-server/adapters"
 	"github.com/prebid/prebid-server/openrtb_ext"
 
 	"github.com/mxmCherry/openrtb"
-
-	"github.com/prebid/prebid-server/adapters"
 )
 
 func TestRXAdapter_MakeRequests(t *testing.T) {
@@ -83,8 +82,8 @@ func TestRXAdapter_MakeRequests(t *testing.T) {
 			if err := json.Unmarshal(bidderExt.Bidder, &rxAdspotExt); err != nil {
 				t.Fatalf("Error unmarshalling adspot extension from bidder: %v", err)
 			}
-			if rxAdspotExt.AdspotId != 1 {
-				t.Fatalf("Adspot ID does not match.  Expected: %d, Got: %d", 1, rxAdspotExt.AdspotId)
+			if rxAdspotExt.AdspotID != 1 {
+				t.Fatalf("Adspot ID does not match.  Expected: %d, Got: %d", 1, rxAdspotExt.AdspotID)
 			}
 		} else {
 			t.Fatalf("BidExt object should not be nil and should contain a valid apspot_id.")
